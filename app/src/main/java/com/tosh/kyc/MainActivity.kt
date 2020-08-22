@@ -3,6 +3,7 @@ package com.tosh.kyc
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.microblink.entities.recognizers.Recognizer
@@ -14,6 +15,12 @@ import com.microblink.uisettings.BlinkIdUISettings
 import com.microblink.util.RecognizerCompatibility
 import com.microblink.util.RecognizerCompatibilityStatus
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import smile.identity.core.IDApi
+import smile.identity.core.IDParameters
+import smile.identity.core.PartnerParameters
 
 
 class MainActivity : AppCompatActivity() {
@@ -42,6 +49,10 @@ class MainActivity : AppCompatActivity() {
             startScanning()
         } else {
             Toast.makeText(this, "BlinkID is not supported! Reason: " + status.name, Toast.LENGTH_LONG).show()
+        }
+
+        GlobalScope.launch(Dispatchers.IO){
+            getIdApi()
         }
 
 
@@ -91,6 +102,21 @@ class MainActivity : AppCompatActivity() {
 
     private fun onScanCanceled() {
         Toast.makeText(this, "Scan cancelled!", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun getIdApi(){
+        val partnerParameters = PartnerParameters("0000000005", "ktm",  5)
+
+        val idInfo = IDParameters("Raymond","", "Gitonga",
+            "KE","NATIONAL_ID", "32324842" ,"23/11/1995",
+            "+254729320243" )
+
+
+        val connection = IDApi("822", this.getString(R.string.si), 0)
+
+        val response = connection.submit_job(partnerParameters.get(), idInfo.get())
+
+        Log.e("KEKEKE", ""+response)
     }
 
     companion object {
