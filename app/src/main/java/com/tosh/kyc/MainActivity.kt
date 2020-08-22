@@ -3,9 +3,6 @@ package com.tosh.kyc
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.view.Window
-import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.microblink.entities.recognizers.Recognizer
@@ -68,10 +65,16 @@ class MainActivity : AppCompatActivity() {
                 mRecognizerBundle.loadFromIntent(data)
                 val result = mRecognizer.result
                 if (result.resultState == Recognizer.Result.State.Valid) {
-                    name.text = "Name ${result.firstName} ${result.lastName}"
-                    nationality.text = "Nationality ${result.nationality}"
-                    date.text = "DOB: ${result.dateOfBirth.date}"
-                    number.text = "Id Number: ${result.documentNumber}"
+                    nameTv.text = "${result.firstName} ${result.lastName}"
+                    nationalityTv.text = result.nationality
+                    dateTv.text = result.dateOfBirth.date.toString()
+                    numberTv.text = result.documentNumber
+
+                    if (result.documentNumber[0].isLetter()){
+                        number.text = "Passport Number"
+                    }else{
+                        number.text = "Id Number"
+                    }
 
                     image.setImageBitmap(result.faceImage?.convertToBitmap())
                     imagePic.setImageBitmap(result.fullDocumentFrontImage?.convertToBitmap())
