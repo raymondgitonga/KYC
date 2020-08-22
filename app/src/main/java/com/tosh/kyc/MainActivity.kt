@@ -16,7 +16,6 @@ import com.microblink.util.RecognizerCompatibilityStatus
 import kotlinx.android.synthetic.main.activity_main.*
 
 
-
 class MainActivity : AppCompatActivity() {
 
     private lateinit var mRecognizer: BlinkIdCombinedRecognizer
@@ -26,13 +25,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
-        val status = RecognizerCompatibility.getRecognizerCompatibilityStatus(this)
-        if (status == RecognizerCompatibilityStatus.RECOGNIZER_SUPPORTED) {
-
-        } else {
-            Toast.makeText(this, "BlinkID is not supported! Reason: " + status.name, Toast.LENGTH_LONG).show()
-        }
 
         mRecognizer = BlinkIdCombinedRecognizer()
 
@@ -45,11 +37,17 @@ class MainActivity : AppCompatActivity() {
 
         mRecognizer.fullDocumentImageDpi
 
+        val status = RecognizerCompatibility.getRecognizerCompatibilityStatus(this)
+        if (status == RecognizerCompatibilityStatus.RECOGNIZER_SUPPORTED) {
+            startScanning()
+        } else {
+            Toast.makeText(this, "BlinkID is not supported! Reason: " + status.name, Toast.LENGTH_LONG).show()
+        }
 
-        startScanning()
+
     }
 
-    private fun startScanning(){
+    private fun startScanning() {
         var settings = BlinkIdUISettings(mRecognizerBundle)
 
         settings.activityTheme = R.style.Theme_AppCompat_DayNight_NoActionBar
@@ -65,23 +63,26 @@ class MainActivity : AppCompatActivity() {
                 mRecognizerBundle.loadFromIntent(data)
                 val result = mRecognizer.result
                 if (result.resultState == Recognizer.Result.State.Valid) {
-                    nameTv.text = "${result.firstName} ${result.lastName}"
-                    nationalityTv.text = result.nationality
-                    dateTv.text = result.dateOfBirth.date.toString()
-                    numberTv.text = result.documentNumber
-
-                    if (result.documentNumber[0].isLetter()){
-                        number.text = "Passport Number"
-                    }else{
-                        number.text = "Id Number"
+                    if (result.firstName.isEmpty()) {
+                        nameTv.text = result.fullName.capitalize()
+                    } else {
+                        nameTv.text = "${result.firstName.capitalize()} ${result.lastName.capitalize()}"
                     }
+                    dateTv.text = result.dateOfBirth.date.toString()
+                    idNumberTv.text = result.documentNumber
 
+                    if(result.documentNumber[0].isLetter()){
+                        idTypeTv.text = "Passport"
+                    }else{
+                        idTypeTv.text = "Identity Card"
+                    }
                     image.setImageBitmap(result.faceImage?.convertToBitmap())
-                    imagePic.setImageBitmap(result.fullDocumentFrontImage?.convertToBitmap())
+                    frontIdPic.setImageBitmap(result.fullDocumentFrontImage?.convertToBitmap())
+                    backIdPic.setImageBitmap(result.fullDocumentBackImage?.convertToBitmap())
 
                 }
             }
-        }else{
+        } else {
             onScanCanceled();
         }
     }
