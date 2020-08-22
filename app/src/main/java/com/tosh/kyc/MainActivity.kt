@@ -68,15 +68,10 @@ class MainActivity : AppCompatActivity() {
                 mRecognizerBundle.loadFromIntent(data)
                 val result = mRecognizer.result
                 if (result.resultState == Recognizer.Result.State.Valid) {
-                    Log.e("First Name", result.firstName)
-                    Log.e("Last Name", result.lastName)
-                    Log.e("Nationality", result.nationality)
-                    Log.e("Date Of Birth", result.dateOfBirth.date.toString())
-                    Log.e("Document", result.documentNumber)
-                    Log.e("Sex", result.sex)
-                    Log.e("Full Name", result.fullName)
-                    Log.e("Age", result.age.toString())
-
+                    name.text = "Name ${result.firstName} ${result.lastName}"
+                    nationality.text = "Nationality ${result.nationality}"
+                    date.text = "DOB: ${result.dateOfBirth.date}"
+                    number.text = "Id Number: ${result.documentNumber}"
 
                     image.setImageBitmap(result.faceImage?.convertToBitmap())
                     imagePic.setImageBitmap(result.fullDocumentFrontImage?.convertToBitmap())
