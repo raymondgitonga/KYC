@@ -69,12 +69,14 @@ class MainActivity : AppCompatActivity() {
                         nameTv.text = "${result.firstName.capitalize()} ${result.lastName.capitalize()}"
                     }
                     dateTv.text = result.dateOfBirth.date.toString()
-                    idNumberTv.text = result.documentNumber
+                    idNumberTv.text = result.personalIdNumber
 
                     if(result.documentNumber[0].isLetter()){
                         idTypeTv.text = "Passport"
+                        idNumberTv.text = result.documentNumber
                     }else{
                         idTypeTv.text = "Identity Card"
+                        idNumberTv.text = result.personalIdNumber
                     }
                     image.setImageBitmap(result.faceImage?.convertToBitmap())
                     frontIdPic.setImageBitmap(result.fullDocumentFrontImage?.convertToBitmap())
